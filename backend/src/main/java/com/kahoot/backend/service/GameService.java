@@ -56,4 +56,14 @@ public class GameService {
             System.out.println("Jugador " + playerName + " unido a sala " + pin);
         }
     }
+
+    public void processAnswer(String pin, String playerName, int answerIndex) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'processAnswer'");
+    }
+
+    public void nextQuestion(String pin) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'nextQuestion'");
+    }
 }
