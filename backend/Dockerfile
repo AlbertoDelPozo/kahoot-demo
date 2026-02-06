@@ -1,19 +1,17 @@
-# 1. Usamos una imagen base con Java 17 y Maven para construir
-FROM maven:3.8.5-openjdk-17 AS build
+# 1. Usamos Maven con Eclipse Temurin para construir
+FROM maven:3.9.6-eclipse-temurin-17 AS build
 WORKDIR /app
 COPY pom.xml .
 COPY src ./src
-# Compilamos el proyecto y saltamos los tests para ir más rápido
 RUN mvn clean package -DskipTests
 
-# 2. Usamos una imagen ligera solo con Java para ejecutar
-FROM openjdk:17-jdk-slim
+# 2. Usamos una imagen ligera de Java 17 para ejecutar
+FROM eclipse-temurin:17-jre-alpine
 WORKDIR /app
-# Copiamos el archivo .jar generado en el paso anterior
 COPY --from=build /app/target/*.jar app.jar
 
-# Exponemos el puerto 8080
+# Exponemos el puerto
 EXPOSE 8080
 
-# Comando para arrancar
+# Comando de arranque
 ENTRYPOINT ["java", "-jar", "app.jar"]
