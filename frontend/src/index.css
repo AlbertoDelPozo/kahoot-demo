@@ -1,0 +1,71 @@
+@import "tailwindcss";
+
+/* --- Configuración de Tema (Variables CSS) --- */
+:root {
+  /* Modo Claro por defecto */
+  --bg-app: #f3f4f6; /* gray-100 */
+  --text-app: #111827; /* gray-900 */
+}
+
+/* Detección automática de preferencia de sistema oscuro */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg-app: #111827; /* gray-900 */
+    --text-app: #ffffff;
+  }
+}
+
+/* Clase manual para forzar Modo Oscuro (útil para el botón de toggle) */
+.dark {
+  --bg-app: #111827;
+  --text-app: #ffffff;
+}
+
+/* --- Estilos Base Unificados --- */
+html {
+  overflow-x: hidden;
+}
+
+body {
+  /* Usamos las variables para el color dinámico */
+  background-color: var(--bg-app);
+  color: var(--text-app);
+  
+  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  
+  /* MOBILE FIRST: Altura dinámica para evitar problemas con barras de navegador */
+  min-height: 100vh;
+  min-height: 100dvh;
+  
+  /* UX Móvil: Elimina flash azul */
+  -webkit-tap-highlight-color: transparent;
+
+  /* Transición suave entre temas claro/oscuro */
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* --- Animaciones Personalizadas --- */
+@keyframes fadeIn {
+  from { 
+    opacity: 0; 
+    transform: translateY(10px); 
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0); 
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+/* Animación de pulso para el lobby */
+@keyframes lobby-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.8; transform: scale(0.95); }
+}
+
+.animate-lobby-pulse {
+  animation: lobby-pulse 2s infinite ease-in-out;
+}
