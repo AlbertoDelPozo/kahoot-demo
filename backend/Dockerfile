@@ -1,27 +1,27 @@
-# 1. Fase de Construcción (Build)
-# Usamos una imagen oficial de Maven con Java 17 (Eclipse Temurin es más estable)
+# 1. Fase de Construcción
 FROM maven:3.9.6-eclipse-temurin-17 AS build
 WORKDIR /app
 
-# --- CAMBIO IMPORTANTE ---
-# Copiamos TODO el contenido de la carpeta actual (backend) al contenedor.
-# Esto es más seguro que copiar carpeta a carpeta y evita errores de "src not found".
+# Copiamos todo lo que nos mande Railway
 COPY . .
 
-# Compilamos el proyecto y generamos el archivo .jar (saltando los tests para ir rápido)
-RUN mvn clean package -DskipTests
+# --- LA MAGIA ESTÁ AQUÍ ---
+# Este comando comprueba si estamos en la raíz o si el código está en una subcarpeta 'backend'.
+# Ejecuta Maven en el sitio correcto y mueve el .jar final siempre a /app/app.jar
+RUN if [ -f "backend/pom.xml" ]; then \
+        cd backend && mvn clean package -DskipTests && mv target/*.jar /app/app.jar; \
+    elif [ -f "pom.xml" ]; then \
+        mvn clean package -DskipTests && mv target/*.jar /app/app.jar; \
+    else \
+        echo "ERROR: No encuentro el pom.xml en ninguna parte" && exit 1; \
+    fi
 
-# 2. Fase de Ejecución (Run)
-# Usamos una imagen muy ligera de Java 17 solo para correr la app
+# 2. Fase de Ejecución
 FROM eclipse-temurin:17-jre-alpine
 WORKDIR /app
 
-# Buscamos el archivo .jar que generó la fase anterior.
-# El asterisco (*.jar) hace que no importe cómo se llame tu archivo (kahoot-0.0.1.jar, etc).
-COPY --from=build /app/target/*.jar app.jar
+# Ahora sabemos SEGURO que el archivo está en /app/app.jar en la fase anterior
+COPY --from=build /app/app.jar app.jar
 
-# Informamos a Railway de que la app escucha en el puerto 8080
 EXPOSE 8080
-
-# Comando para arrancar la aplicación
 ENTRYPOINT ["java", "-jar", "app.jar"]
